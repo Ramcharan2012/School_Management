@@ -1,3 +1,9 @@
 spring:
   application:
     name: SCHOOL MANAGEMENT
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/your_db
+    username: postgres
+    password: postgres@123
+    driver-class-name: org.postgresql.Driver
