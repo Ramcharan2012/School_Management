@@ -1,9 +1,101 @@
 spring:
   application:
-    name: SCHOOL MANAGEMENT
+    name: School Management System
 
+  # ===================== DATABASE =====================
   datasource:
-    url: jdbc:postgresql://localhost:5432/your_db
+    url: jdbc:postgresql://localhost:5432/school_management_db
     username: postgres
     password: postgres@123
     driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      connection-timeout: 30000
+
+  # ===================== JPA / HIBERNATE =====================
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: false
+
+  # ===================== REDIS (configure when Phase 3 starts) =====================
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      # password: yourredispassword (uncomment when Redis has auth)
+      timeout: 60000
+
+  # ===================== MAIL =====================
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME:your-email@gmail.com}
+    password: ${MAIL_PASSWORD:your-app-password}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  # ===================== SECURITY =====================
+  security:
+    user:
+      name: admin
+      password: admin
+
+# ===================== SERVER =====================
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+# ===================== JWT CONFIG =====================
+application:
+  jwt:
+    secret: ${JWT_SECRET:ThisIsAVeryLongSecretKeyForSchoolManagementSystemJWT2024}
+    expiration-ms: 86400000  # 24 hours
+    refresh-expiration-ms: 604800000  # 7 days
+
+# ===================== SWAGGER / API DOCS =====================
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    display-request-duration: true
+    groups-order: ASC
+
+# ===================== ACTUATOR =====================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+  info:
+    env:
+      enabled: true
+
+info:
+  app:
+    name: School Management System
+    version: 1.0.0
+    description: Comprehensive School ERP with role-based security
+
+# ===================== LOGGING =====================
+logging:
+  level:
+    com.school.management: DEBUG
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
