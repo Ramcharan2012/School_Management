@@ -6,6 +6,7 @@ import com.school.management.common.response.PageResponse;
 import com.school.management.marks.entity.Exam;
 import com.school.management.marks.entity.Mark;
 import com.school.management.marks.service.MarksService;
+import com.school.management.marks.service.ReportCardPdfService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Data;
@@ -13,7 +14,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +30,7 @@ import java.util.Map;
 public class MarksController {
 
     private final MarksService marksService;
+    private final ReportCardPdfService reportCardPdfService;
 
     // ── Admin/Teacher: Exam Management ───────────────────────────────────────
 
@@ -85,10 +89,22 @@ public class MarksController {
     }
 
     @GetMapping("/student/marks/{studentId}/report-card")
-    @Operation(summary = "Get full report card with overall grade and percentage")
+    @Operation(summary = "Get full report card as JSON with overall grade and percentage")
     public ResponseEntity<ApiResponse<Map<String, Object>>> getReportCard(
             @PathVariable Long studentId, @RequestParam Long classGradeId) {
         return ResponseEntity.ok(ApiResponse.success(marksService.getStudentReportCard(studentId, classGradeId)));
+    }
+
+    @GetMapping("/student/marks/{studentId}/report-card/pdf")
+    @Operation(summary = "Download report card as a formatted PDF")
+    public ResponseEntity<byte[]> getReportCardPdf(
+            @PathVariable Long studentId, @RequestParam Long classGradeId) throws Exception {
+        byte[] pdf = reportCardPdfService.generate(studentId, classGradeId);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=ReportCard_" + studentId + ".pdf")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdf);
     }
 
     @GetMapping("/teacher/marks/exam/{examId}/results")

@@ -45,4 +45,9 @@ public final class IdGeneratorUtil {
     public static String generateReceiptNumber() {
         return generate("RCPT");
     }
+
+    public static String generateStaffId() {
+        return generate("STF");
+    }
 }
+

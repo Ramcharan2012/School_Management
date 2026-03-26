@@ -4,7 +4,10 @@ import com.school.management.common.entity.BaseEntity;
 import com.school.management.common.enums.FeeStatus;
 import com.school.management.common.enums.PaymentMethod;
 import com.school.management.student.entity.Student;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.RelationTargetAuditMode;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -14,6 +17,7 @@ import java.time.LocalDate;
  * Tracks an individual fee payment made by a student against a FeeStructure.
  * Supports partial payments via amountPaid vs amount due.
  */
+@Audited
 @Entity
 @Table(name = "fee_payments")
 @Getter
@@ -53,10 +57,14 @@ public class FeePayment extends BaseEntity {
 
     // ── Relationships ──────────────────────────────────────────────────────────
 
+    @JsonIgnore
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "student_id", nullable = false)
     private Student student;
 
+    @JsonIgnore
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fee_structure_id", nullable = false)
     private FeeStructure feeStructure;

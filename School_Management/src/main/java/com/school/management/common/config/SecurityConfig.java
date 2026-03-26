@@ -78,6 +78,7 @@ public class SecurityConfig {
 
                         // ── Completely Public ─────────────────────────────────────────
                         .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/auth/password-reset/**").permitAll()
                         .requestMatchers("/public/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/actuator/health", "/actuator/info").permitAll()

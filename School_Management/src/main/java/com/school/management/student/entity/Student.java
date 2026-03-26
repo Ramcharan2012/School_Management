@@ -1,5 +1,6 @@
 package com.school.management.student.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.school.management.common.entity.BaseEntity;
 import com.school.management.academic.entity.ClassGrade;
 import com.school.management.user.entity.User;
@@ -66,22 +67,27 @@ public class Student extends BaseEntity {
 
     // ── Relationships ──────────────────────────────────────────────────────────
 
+    @JsonIgnore
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "class_grade_id")
     private ClassGrade classGrade;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default
     private List<com.school.management.attendance.entity.Attendance> attendances = new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default
     private List<com.school.management.marks.entity.Mark> marks = new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default
     private List<com.school.management.fee.entity.FeePayment> feePayments = new ArrayList<>();

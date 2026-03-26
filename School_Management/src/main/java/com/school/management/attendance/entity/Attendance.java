@@ -5,6 +5,7 @@ import com.school.management.common.entity.BaseEntity;
 import com.school.management.common.enums.AttendanceStatus;
 import com.school.management.student.entity.Student;
 import com.school.management.teacher.entity.Teacher;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -38,14 +39,17 @@ public class Attendance extends BaseEntity {
 
     // ── Relationships ──────────────────────────────────────────────────────────
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "student_id", nullable = false)
     private Student student;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subject_id", nullable = false)
     private Subject subject;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "marked_by", nullable = false)
     private Teacher markedBy;

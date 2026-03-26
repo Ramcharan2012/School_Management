@@ -1,6 +1,7 @@
 package com.school.management.academic.entity;
 
 import com.school.management.common.entity.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,14 +23,17 @@ public class SubjectAssignment extends BaseEntity {
 
     // ── Relationships ──────────────────────────────────────────────────────────
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "teacher_id", nullable = false)
     private com.school.management.teacher.entity.Teacher teacher;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subject_id", nullable = false)
     private Subject subject;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "class_grade_id", nullable = false)
     private ClassGrade classGrade;

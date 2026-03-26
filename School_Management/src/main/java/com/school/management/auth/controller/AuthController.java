@@ -29,7 +29,7 @@ public class AuthController {
     // ── Public — No Auth Required ─────────────────────────────────────────────
 
     @PostMapping("/login")
-    @Operation(summary = "Login with email + password — returns JWT access + refresh tokens")
+    @Operation(summary = "Login with email / username / roll number + password")
     public ResponseEntity<ApiResponse<LoginResponse>> login(@Valid @RequestBody LoginRequest request) {
         LoginResponse response = authService.login(request);
         String message = Boolean.TRUE.equals(response.getIsFirstLogin())
@@ -72,10 +72,42 @@ public class AuthController {
         return ResponseEntity.ok(ApiResponse.success(userDetails));
     }
 
+    // ── Password Reset (Public — no token needed) ─────────────────────────────
+
+    @PostMapping("/password-reset/request")
+    @Operation(summary = "Request password reset — sends a 6-digit OTP to the user's email")
+    public ResponseEntity<ApiResponse<Void>> requestPasswordReset(
+            @RequestBody PasswordResetRequest request) {
+        authService.requestPasswordReset(request.getEmail());
+        return ResponseEntity.ok(ApiResponse.success(
+                "OTP sent to your email. It expires in 15 minutes."));
+    }
+
+    @PostMapping("/password-reset/confirm")
+    @Operation(summary = "Reset password using OTP received via email")
+    public ResponseEntity<ApiResponse<Void>> confirmPasswordReset(
+            @RequestBody PasswordResetConfirmRequest request) {
+        authService.resetPassword(request.getEmail(), request.getOtp(), request.getNewPassword());
+        return ResponseEntity.ok(ApiResponse.success(
+                "Password reset successfully. Please login with your new password."));
+    }
+
     // ── Inner DTOs ────────────────────────────────────────────────────────────
 
-    @Data
+    @lombok.Data
     static class RefreshTokenRequest {
         private String refreshToken;
+    }
+
+    @lombok.Data
+    static class PasswordResetRequest {
+        private String email;
+    }
+
+    @lombok.Data
+    static class PasswordResetConfirmRequest {
+        private String email;
+        private String otp;
+        private String newPassword;
     }
 }

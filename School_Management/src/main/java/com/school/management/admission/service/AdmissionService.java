@@ -19,8 +19,10 @@ import com.school.management.student.entity.Student;
 import com.school.management.student.repository.StudentRepository;
 import com.school.management.user.entity.User;
 import com.school.management.user.repository.UserRepository;
+import com.school.management.common.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -40,6 +42,7 @@ public class AdmissionService {
     private final StudentRepository studentRepo;
     private final ClassGradeRepository classGradeRepo;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
     // ── Public: Submit Admission Form ─────────────────────────────────────────
 
@@ -151,8 +154,21 @@ public class AdmissionService {
 
             admission.setGeneratedUserId(savedUser.getId());
 
-            log.info("Student account created: username={}, rollNumber={}, tempPassword={} [LOG ONLY - remove in prod]",
-                    username, rollNumber, tempPassword);
+            // 4. Send approval email asynchronously (fire and forget)
+            String className = classGrade.getDisplayName();
+            String tempPasswordForEmail = tempPassword;
+            emailService.sendAdmissionApprovalEmail(
+                    admission.getApplicantEmail(),
+                    admission.getFirstName() + " " + admission.getLastName(),
+                    username, tempPasswordForEmail, className);
+
+            log.info("Student account created: username={}, rollNumber={}", username, rollNumber);
+        } else if (reviewRequest.getStatus() == AdmissionStatus.REJECTED) {
+            // Send rejection email asynchronously
+            emailService.sendAdmissionRejectionEmail(
+                    admission.getApplicantEmail(),
+                    admission.getFirstName() + " " + admission.getLastName(),
+                    reviewRequest.getAdminRemarks());
         }
 
         AdmissionRequest updated = admissionRepo.save(admission);

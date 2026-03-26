@@ -2,6 +2,8 @@ package com.school.management;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.envers.repository.config.EnableEnversRepositories;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 /**
  * School Management System - Main Application Entry Point
@@ -20,6 +22,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * - leave : Leave requests for students and teachers
  */
 @SpringBootApplication
+@EnableAsync
+@EnableEnversRepositories
 public class SchoolManagementApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(SchoolManagementApplication.class, args);

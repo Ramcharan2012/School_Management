@@ -1,5 +1,6 @@
 package com.school.management.academic.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.school.management.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
@@ -40,18 +41,22 @@ public class ClassGrade extends BaseEntity {
 
     // ── Relationships ──────────────────────────────────────────────────────────
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "academic_year_id", nullable = false)
     private AcademicYear academicYear;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "class_teacher_id")
     private com.school.management.teacher.entity.Teacher classTeacher;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "classGrade", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default
     private List<com.school.management.student.entity.Student> students = new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "classGrade", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default
     private List<SubjectAssignment> subjectAssignments = new ArrayList<>();

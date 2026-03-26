@@ -1,5 +1,6 @@
 package com.school.management.academic.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.school.management.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -38,6 +39,7 @@ public class Department extends BaseEntity {
 
     // ── Relationships ──────────────────────────────────────────────────────────
 
+    @JsonIgnore
     @OneToMany(mappedBy = "department", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default
     private List<Subject> subjects = new ArrayList<>();

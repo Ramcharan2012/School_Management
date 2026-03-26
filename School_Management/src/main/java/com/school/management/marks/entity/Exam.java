@@ -1,5 +1,6 @@
 package com.school.management.marks.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.school.management.academic.entity.ClassGrade;
 import com.school.management.academic.entity.Subject;
 import com.school.management.common.entity.BaseEntity;
@@ -52,14 +53,17 @@ public class Exam extends BaseEntity {
 
     // ── Relationships ──────────────────────────────────────────────────────────
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subject_id", nullable = false)
     private Subject subject;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "class_grade_id", nullable = false)
     private ClassGrade classGrade;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "exam", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default
     private List<Mark> marks = new ArrayList<>();

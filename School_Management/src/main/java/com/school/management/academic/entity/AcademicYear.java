@@ -1,5 +1,6 @@
 package com.school.management.academic.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.school.management.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -41,6 +42,7 @@ public class AcademicYear extends BaseEntity {
 
     // ── Relationships ──────────────────────────────────────────────────────────
 
+    @JsonIgnore
     @OneToMany(mappedBy = "academicYear", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default
     private List<ClassGrade> classGrades = new ArrayList<>();

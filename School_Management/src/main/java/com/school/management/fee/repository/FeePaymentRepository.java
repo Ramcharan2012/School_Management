@@ -6,8 +6,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Repository
@@ -20,4 +22,7 @@ public interface FeePaymentRepository extends JpaRepository<FeePayment, Long> {
     BigDecimal totalPaidByStudentId(Long studentId);
 
     Page<FeePayment> findByStatus(FeeStatus status, Pageable pageable);
+
+    @Query("SELECT SUM(fp.amountPaid) FROM FeePayment fp WHERE fp.paymentDate BETWEEN :from AND :to")
+    BigDecimal getTotalPaidBetween(@Param("from") LocalDate from, @Param("to") LocalDate to);
 }

@@ -39,6 +39,12 @@
 			<scope>runtime</scope>
 		</dependency>
 
+		<!-- ===================== HIBERNATE ENVERS (Audit Tables) ===================== -->
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-envers</artifactId>
+		</dependency>
+
 		<!-- ===================== SECURITY (configured open for now) ===================== -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -113,6 +119,35 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+
+		<!-- ===================== AOP (for API Audit Logging) ===================== -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-aop</artifactId>
+		</dependency>
+
+		<!-- ===================== JACKSON JSR310 (Java 8 Date/Time for Redis) ===================== -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-jsr310</artifactId>
+		</dependency>
+
+		<!-- ===================== ITEXT 8 (PDF generation for ID cards and report cards) ===================== -->
+		<dependency>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>kernel</artifactId>
+			<version>8.0.5</version>
+		</dependency>
+		<dependency>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>layout</artifactId>
+			<version>8.0.5</version>
+		</dependency>
+		<dependency>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>barcodes</artifactId>
+			<version>8.0.5</version>
 		</dependency>
 
 		<!-- ===================== TESTING ===================== -->

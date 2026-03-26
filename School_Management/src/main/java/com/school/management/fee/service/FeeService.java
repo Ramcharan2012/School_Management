@@ -14,6 +14,7 @@ import com.school.management.fee.entity.FeePayment;
 import com.school.management.fee.entity.FeeStructure;
 import com.school.management.fee.repository.FeePaymentRepository;
 import com.school.management.fee.repository.FeeStructureRepository;
+import com.school.management.common.service.EmailService;
 import com.school.management.student.entity.Student;
 import com.school.management.student.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,77 +31,93 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class FeeService {
 
-    private final FeeStructureRepository feeStructureRepo;
-    private final FeePaymentRepository feePaymentRepo;
-    private final StudentRepository studentRepo;
-    private final AcademicYearRepository academicYearRepo;
-    private final ClassGradeRepository classGradeRepo;
+        private final FeeStructureRepository feeStructureRepo;
+        private final FeePaymentRepository feePaymentRepo;
+        private final StudentRepository studentRepo;
+        private final AcademicYearRepository academicYearRepo;
+        private final ClassGradeRepository classGradeRepo;
+        private final EmailService emailService;
 
-    @Transactional
-    public FeeStructure createFeeStructure(FeeType feeType, BigDecimal amount, LocalDate dueDate,
-            String description, Boolean isMandatory,
-            Long academicYearId, Long classGradeId) {
-        AcademicYear ay = academicYearRepo.findById(academicYearId)
-                .orElseThrow(() -> new ResourceNotFoundException("AcademicYear", academicYearId));
-        ClassGrade cg = classGradeId != null ? classGradeRepo.findById(classGradeId)
-                .orElseThrow(() -> new ResourceNotFoundException("ClassGrade", classGradeId)) : null;
-        return feeStructureRepo.save(FeeStructure.builder()
-                .feeType(feeType).amount(amount).dueDate(dueDate).description(description)
-                .isMandatory(isMandatory).academicYear(ay).classGrade(cg).isActive(true)
-                .build());
-    }
+        @Transactional
+        public FeeStructure createFeeStructure(FeeType feeType, BigDecimal amount, LocalDate dueDate,
+                        String description, Boolean isMandatory,
+                        Long academicYearId, Long classGradeId) {
+                AcademicYear ay = academicYearRepo.findById(academicYearId)
+                                .orElseThrow(() -> new ResourceNotFoundException("AcademicYear", academicYearId));
+                ClassGrade cg = classGradeId != null ? classGradeRepo.findById(classGradeId)
+                                .orElseThrow(() -> new ResourceNotFoundException("ClassGrade", classGradeId)) : null;
+                return feeStructureRepo.save(FeeStructure.builder()
+                                .feeType(feeType).amount(amount).dueDate(dueDate).description(description)
+                                .isMandatory(isMandatory).academicYear(ay).classGrade(cg).isActive(true)
+                                .build());
+        }
 
-    public List<FeeStructure> getFeeStructureForStudent(Long studentId) {
-        Student student = studentRepo.findById(studentId)
-                .orElseThrow(() -> new ResourceNotFoundException("Student", studentId));
-        Long ayId = student.getClassGrade().getAcademicYear().getId();
-        Long cgId = student.getClassGrade().getId();
-        List<FeeStructure> classSpecific = feeStructureRepo.findByClassGradeIdAndAcademicYearId(cgId, ayId);
-        List<FeeStructure> global = feeStructureRepo.findByClassGradeIdIsNullAndAcademicYearId(ayId);
-        classSpecific.addAll(global);
-        return classSpecific;
-    }
+        public List<FeeStructure> getFeeStructureForStudent(Long studentId) {
+                Student student = studentRepo.findById(studentId)
+                                .orElseThrow(() -> new ResourceNotFoundException("Student", studentId));
+                Long ayId = student.getClassGrade().getAcademicYear().getId();
+                Long cgId = student.getClassGrade().getId();
+                List<FeeStructure> classSpecific = feeStructureRepo.findByClassGradeIdAndAcademicYearId(cgId, ayId);
+                List<FeeStructure> global = feeStructureRepo.findByClassGradeIdIsNullAndAcademicYearId(ayId);
+                classSpecific.addAll(global);
+                return classSpecific;
+        }
 
-    @Transactional
-    public FeePayment recordPayment(Long studentId, Long feeStructureId, BigDecimal amountPaid,
-            PaymentMethod method, String transactionRef, String remarks) {
-        Student student = studentRepo.findById(studentId)
-                .orElseThrow(() -> new ResourceNotFoundException("Student", studentId));
-        FeeStructure feeStructure = feeStructureRepo.findById(feeStructureId)
-                .orElseThrow(() -> new ResourceNotFoundException("FeeStructure", feeStructureId));
+        @Transactional
+        public FeePayment recordPayment(Long studentId, Long feeStructureId, BigDecimal amountPaid,
+                        PaymentMethod method, String transactionRef, String remarks) {
+                Student student = studentRepo.findById(studentId)
+                                .orElseThrow(() -> new ResourceNotFoundException("Student", studentId));
+                FeeStructure feeStructure = feeStructureRepo.findById(feeStructureId)
+                                .orElseThrow(() -> new ResourceNotFoundException("FeeStructure", feeStructureId));
 
-        FeeStatus status = amountPaid.compareTo(feeStructure.getAmount()) >= 0
-                ? FeeStatus.PAID
-                : FeeStatus.PARTIALLY_PAID;
+                FeeStatus status = amountPaid.compareTo(feeStructure.getAmount()) >= 0
+                                ? FeeStatus.PAID
+                                : FeeStatus.PARTIALLY_PAID;
 
-        return feePaymentRepo.save(FeePayment.builder()
-                .student(student).feeStructure(feeStructure)
-                .amountPaid(amountPaid).paymentDate(LocalDate.now())
-                .paymentMethod(method).transactionReference(transactionRef)
-                .receiptNumber(IdGeneratorUtil.generateReceiptNumber())
-                .remarks(remarks).status(status)
-                .build());
-    }
+                FeePayment payment = feePaymentRepo.save(FeePayment.builder()
+                                .student(student).feeStructure(feeStructure)
+                                .amountPaid(amountPaid).paymentDate(LocalDate.now())
+                                .paymentMethod(method).transactionReference(transactionRef)
+                                .receiptNumber(IdGeneratorUtil.generateReceiptNumber())
+                                .remarks(remarks).status(status)
+                                .build());
 
-    public PageResponse<FeePayment> getStudentPayments(Long studentId, Pageable pageable) {
-        return PageResponse.of(feePaymentRepo.findByStudentId(studentId, pageable));
-    }
+                // Send fee receipt email asynchronously if student has an email
+                if (student.getUser() != null && student.getUser().getEmail() != null) {
+                        emailService.sendFeeReceiptEmail(
+                                        student.getUser().getEmail(),
+                                        student.getUser().getFullName(),
+                                        payment.getReceiptNumber(),
+                                        feeStructure.getFeeType().name(),
+                                        amountPaid,
+                                        method.name(),
+                                        transactionRef,
+                                        payment.getPaymentDate());
+                }
 
-    public Map<String, Object> getStudentFeeStatement(Long studentId) {
-        List<FeeStructure> structures = getFeeStructureForStudent(studentId);
-        BigDecimal totalDue = structures.stream()
-                .map(FeeStructure::getAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
-        BigDecimal totalPaid = feePaymentRepo.totalPaidByStudentId(studentId);
-        if (totalPaid == null)
-            totalPaid = BigDecimal.ZERO;
-        BigDecimal balance = totalDue.subtract(totalPaid);
+                return payment;
+        }
 
-        return Map.of("studentId", studentId, "totalDue", totalDue,
-                "totalPaid", totalPaid, "balance", balance,
-                "feeStatus", balance.compareTo(BigDecimal.ZERO) <= 0 ? "CLEAR" : "DUES_PENDING");
-    }
+        public PageResponse<FeePayment> getStudentPayments(Long studentId, Pageable pageable) {
+                return PageResponse.of(feePaymentRepo.findByStudentId(studentId, pageable));
+        }
 
-    public List<FeeStructure> getAllFeeStructures(Long academicYearId) {
-        return feeStructureRepo.findByAcademicYearId(academicYearId);
-    }
+        public Map<String, Object> getStudentFeeStatement(Long studentId) {
+                List<FeeStructure> structures = getFeeStructureForStudent(studentId);
+                BigDecimal totalDue = structures.stream()
+                                .map(FeeStructure::getAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
+                BigDecimal totalPaid = feePaymentRepo.totalPaidByStudentId(studentId);
+                if (totalPaid == null)
+                        totalPaid = BigDecimal.ZERO;
+                BigDecimal balance = totalDue.subtract(totalPaid);
+
+                return Map.of("studentId", studentId, "totalDue", totalDue,
+                                "totalPaid", totalPaid, "balance", balance,
+                                "feeStatus", balance.compareTo(BigDecimal.ZERO) <= 0 ? "CLEAR" : "DUES_PENDING");
+        }
+
+        public List<FeeStructure> getAllFeeStructures(Long academicYearId) {
+                return feeStructureRepo.findByAcademicYearId(academicYearId);
+        }
 }

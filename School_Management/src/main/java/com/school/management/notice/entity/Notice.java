@@ -3,6 +3,7 @@ package com.school.management.notice.entity;
 import com.school.management.common.entity.BaseEntity;
 import com.school.management.common.enums.NoticeTarget;
 import com.school.management.user.entity.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -51,6 +52,7 @@ public class Notice extends BaseEntity {
 
     // ── Relationships ──────────────────────────────────────────────────────────
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "posted_by", nullable = false)
     private User postedBy;

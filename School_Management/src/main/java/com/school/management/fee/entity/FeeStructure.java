@@ -4,6 +4,7 @@ import com.school.management.academic.entity.AcademicYear;
 import com.school.management.academic.entity.ClassGrade;
 import com.school.management.common.entity.BaseEntity;
 import com.school.management.common.enums.FeeType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -46,10 +47,12 @@ public class FeeStructure extends BaseEntity {
 
     // ── Relationships ──────────────────────────────────────────────────────────
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "academic_year_id", nullable = false)
     private AcademicYear academicYear;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "class_grade_id")
     private ClassGrade classGrade; // null means applicable to ALL classes

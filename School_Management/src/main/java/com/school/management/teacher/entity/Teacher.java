@@ -1,5 +1,6 @@
 package com.school.management.teacher.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.school.management.common.entity.BaseEntity;
 import com.school.management.academic.entity.Department;
 import com.school.management.user.entity.User;
@@ -47,18 +48,22 @@ public class Teacher extends BaseEntity {
 
     // ── Relationships ──────────────────────────────────────────────────────────
 
+    @JsonIgnore
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id")
     private Department department;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default
     private List<com.school.management.academic.entity.SubjectAssignment> subjectAssignments = new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "markedBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default
     private List<com.school.management.attendance.entity.Attendance> markedAttendances = new ArrayList<>();

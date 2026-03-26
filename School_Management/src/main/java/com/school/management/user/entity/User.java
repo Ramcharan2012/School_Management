@@ -4,7 +4,9 @@ import com.school.management.common.entity.BaseEntity;
 import com.school.management.common.enums.Gender;
 import com.school.management.common.enums.Role;
 import com.school.management.common.enums.UserStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import org.hibernate.envers.Audited;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -15,6 +17,7 @@ import lombok.*;
  * All role-specific data is stored in dedicated profile entities (Teacher,
  * Student).
  */
+@Audited
 @Entity
 @Table(name = "users", uniqueConstraints = {
         @UniqueConstraint(columnNames = "email", name = "uk_user_email"),
@@ -44,6 +47,7 @@ public class User extends BaseEntity {
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
+    @JsonIgnore
     @NotBlank
     @Size(min = 8)
     @Column(name = "password", nullable = false)
