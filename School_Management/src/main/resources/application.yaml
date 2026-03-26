@@ -32,6 +32,13 @@ spring:
       # password: yourredispassword (uncomment when Redis has auth)
       timeout: 60000
 
+  # ===================== KAFKA (Bus Tracking) =====================
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: bus-tracking-group
+      auto-offset-reset: latest
+
   # ===================== MAIL =====================
   mail:
     host: smtp.gmail.com

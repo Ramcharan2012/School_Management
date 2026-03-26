@@ -112,6 +112,35 @@ public class EmailService {
         buildOtpEmailHtml(name, otp));
   }
 
+  // ── Bus Approaching Alert ─────────────────────────────────────────────
+
+  /**
+   * Sends geofence alert to parent when bus is within 2km of student's stop.
+   * Called from LocationConsumer (Kafka).
+   */
+  @Async
+  public void sendBusApproachingEmail(String parentEmail, String parentName,
+      String studentName, String stopName, String vehicleNumber, double distanceKm) {
+    sendHtmlEmail(parentEmail, "🚌 Bus Approaching - " + stopName,
+        """
+            <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px">
+              <div style="background:linear-gradient(135deg,#4facfe,#00f2fe);padding:30px;border-radius:10px 10px 0 0;text-align:center">
+                <h1 style="color:white;margin:0">🚌 Bus is Approaching!</h1>
+              </div>
+              <div style="background:#f8f9fa;padding:30px;border-radius:0 0 10px 10px">
+                <p>Dear <strong>%s</strong>,</p>
+                <p>The school bus is approaching your child's stop. Please ensure <strong>%s</strong> is ready!</p>
+                <div style="background:white;border-left:4px solid #4facfe;padding:20px;margin:20px 0;border-radius:5px">
+                  <p style="margin:5px 0"><strong>📍 Stop:</strong> %s</p>
+                  <p style="margin:5px 0"><strong>🚌 Vehicle:</strong> %s</p>
+                  <p style="margin:5px 0"><strong>📏 Distance:</strong> %.1f km away</p>
+                </div>
+                <p style="color:#7f8c8d;font-size:13px">This is an automated transport notification.</p>
+                <p>Best regards,<br><strong>School Transport Team</strong></p>
+              </div>
+            </div>""".formatted(parentName, studentName, stopName, vehicleNumber, distanceKm));
+  }
+
   // ── Core ──────────────────────────────────────────────────────────────────
 
   private void sendHtmlEmail(String to, String subject, String htmlContent) {

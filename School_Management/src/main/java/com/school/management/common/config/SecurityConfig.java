@@ -102,6 +102,13 @@ public class SecurityConfig {
                         // ── Leave: teachers and students can apply and view own ───────
                         .requestMatchers("/leave/**").authenticated()
 
+                        // ── Transport: GPS ingestion needs auth, location viewing for all ─
+                        .requestMatchers("/transport/location").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/transport/bus/**").authenticated()
+
+                        // ── WebSocket handshake endpoint ──────────────────────────────
+                        .requestMatchers("/ws/**").permitAll()
+
                         // All others require authentication
                         .anyRequest().authenticated())
 

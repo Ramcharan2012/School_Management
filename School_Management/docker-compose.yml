@@ -1,0 +1,68 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# School Management System — Docker Compose
+#
+# Spins up the entire backend stack with one command:
+#   docker-compose up -d
+#
+# Services:
+#   1. PostgreSQL   (port 5432) — Primary database
+#   2. Redis        (port 6379) — Caching & bus location state
+#   3. Zookeeper    (port 2181) — Kafka coordination
+#   4. Kafka        (port 9092) — GPS event streaming
+# ─────────────────────────────────────────────────────────────────────────────
+
+version: '3.9'
+
+services:
+
+  # ── PostgreSQL ────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: school-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: school_management_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres@123
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  # ── Redis ─────────────────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: school-redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+
+  # ── Zookeeper (required by Kafka) ─────────────────────────────────────────
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.6.0
+    container_name: school-zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    restart: unless-stopped
+
+  # ── Apache Kafka ──────────────────────────────────────────────────────────
+  kafka:
+    image: confluentinc/cp-kafka:7.6.0
+    container_name: school-kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

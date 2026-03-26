@@ -150,7 +150,17 @@
 			<version>8.0.5</version>
 		</dependency>
 
-		<!-- ===================== TESTING ===================== -->
+		<!-- ===================== KAFKA (Real-time GPS streaming for bus tracking) ===================== -->
+		<dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka</artifactId>
+		</dependency>
+
+		<!-- ===================== WEBSOCKET (STOMP for live location push to browser) ===================== -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-websocket</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>

@@ -91,4 +91,11 @@ public class Student extends BaseEntity {
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default
     private List<com.school.management.fee.entity.FeePayment> feePayments = new ArrayList<>();
+
+    // ── Transport ─────────────────────────────────────────────────────────────
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "route_stop_id")
+    private com.school.management.transport.entity.RouteStop routeStop; // Student's bus pickup/drop stop
 }
