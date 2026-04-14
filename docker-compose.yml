@@ -65,6 +65,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/school_management_db
       SPRING_DATA_REDIS_HOST: redis
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      JAVA_TOOL_OPTIONS: "-Xmx512m -Xms256m"
     ports:
       - "8080:8080"
 
