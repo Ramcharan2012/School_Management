@@ -97,9 +97,19 @@ export default function LoginPage() {
         </form>
 
         {/* Footer note */}
-        <div style={styles.footer}>
-          <Bus size={14} color="#64748b" />
-          <span style={styles.footerText}>&nbsp;Real-time Bus Tracking Enabled</span>
+        <div style={{...styles.footer, flexDirection: 'column', gap: '16px'}}>
+          <button 
+            type="button" 
+            onClick={() => navigate('/apply')}
+            style={{...styles.btn, background: 'transparent', border: '1px solid #6366f1', color: '#818cf8', width: '100%'}}
+          >
+            Apply for Admission
+          </button>
+          
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <Bus size={14} color="#64748b" />
+            <span style={styles.footerText}>&nbsp;Real-time Bus Tracking Enabled</span>
+          </div>
         </div>
       </div>
 

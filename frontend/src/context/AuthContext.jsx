@@ -7,29 +7,47 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // On mount: restore user from localStorage
   useEffect(() => {
     const token = localStorage.getItem('token');
-    if (token) {
-      authAPI.me()
-        .then((res) => setUser(res.data.data))
-        .catch(() => localStorage.clear())
-        .finally(() => setLoading(false));
-    } else {
-      setLoading(false);
+    const stored = localStorage.getItem('user');
+    if (token && stored) {
+      try {
+        setUser(JSON.parse(stored));
+      } catch (_) {}
     }
+    setLoading(false);
   }, []);
 
   const login = async (identifier, password) => {
+    // POST /auth/login → ApiResponse<LoginResponse>
+    // LoginResponse fields: accessToken, refreshToken, userId, username,
+    //                       email, fullName, role, isFirstLogin
     const res = await authAPI.login(identifier, password);
-    const { token, role, fullName } = res.data.data;
-    localStorage.setItem('token', token);
-    setUser({ fullName, role });
-    return role;
+    const d = res.data.data;
+
+    // Store token
+    localStorage.setItem('token', d.accessToken);
+
+    // Build user object with all fields needed across the app
+    const userObj = {
+      id: d.userId,              // used by LeavePage (applicantId), AttendancePage (teacherId)
+      username: d.username,
+      email: d.email,
+      fullName: d.fullName,
+      role: d.role,              // "ADMIN" | "TEACHER" | "STUDENT" | "STAFF"
+      isFirstLogin: d.isFirstLogin,
+    };
+    localStorage.setItem('user', JSON.stringify(userObj));
+    setUser(userObj);
+
+    return d.role;
   };
 
   const logout = async () => {
     await authAPI.logout().catch(() => {});
-    localStorage.clear();
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
     setUser(null);
   };
 

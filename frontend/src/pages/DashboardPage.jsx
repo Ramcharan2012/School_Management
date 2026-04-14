@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { dashboardAPI } from '../services/api';
 import {
   Users, GraduationCap, BookOpen, Bus,
-  TrendingUp, CheckCircle, AlertCircle, Activity
+  TrendingUp, CheckCircle, AlertCircle, Activity,
+  Briefcase, Building, DollarSign, Calendar
 } from 'lucide-react';
 
 export default function DashboardPage() {
@@ -19,10 +20,14 @@ export default function DashboardPage() {
   const cards = stats ? [
     { label: 'Total Students', value: stats.totalStudents ?? '—', icon: Users, color: '#6366f1' },
     { label: 'Total Teachers', value: stats.totalTeachers ?? '—', icon: GraduationCap, color: '#06b6d4' },
-    { label: 'Classes', value: stats.totalClasses ?? '—', icon: BookOpen, color: '#22c55e' },
+    { label: 'Total Staff', value: stats.totalStaff ?? '—', icon: Briefcase, color: '#8b5cf6' },
+    { label: 'Total Classes', value: stats.totalClasses ?? '—', icon: BookOpen, color: '#22c55e' },
+    { label: 'Departments', value: stats.totalDepartments ?? '—', icon: Building, color: '#3b82f6' },
     { label: 'Pending Admissions', value: stats.pendingAdmissions ?? '—', icon: AlertCircle, color: '#f59e0b' },
-    { label: 'Attendance Today', value: stats.todayAttendance != null ? `${stats.todayAttendance}%` : '—', icon: CheckCircle, color: '#22c55e' },
+    { label: 'Active Users', value: stats.activeUsers ?? '—', icon: Activity, color: '#10b981' },
     { label: 'Active Vehicles', value: stats.activeVehicles ?? '—', icon: Bus, color: '#a78bfa' },
+    { label: 'Monthly Fees', value: stats.monthlyFeeCollection != null ? `₹${stats.monthlyFeeCollection}` : '—', icon: DollarSign, color: '#14b8a6' },
+    { label: 'Leave Requests', value: stats.pendingLeaveRequests ?? '—', icon: Calendar, color: '#ef4444' },
   ] : [];
 
   return (
@@ -42,7 +47,7 @@ export default function DashboardPage() {
       {/* Stats Grid */}
       {loading ? (
         <div style={styles.loadingGrid}>
-          {[...Array(6)].map((_, i) => <div key={i} style={styles.skeleton} />)}
+          {[...Array(10)].map((_, i) => <div key={i} style={styles.skeleton} />)}
         </div>
       ) : (
         <div style={styles.grid}>

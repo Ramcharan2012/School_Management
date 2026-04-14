@@ -49,7 +49,7 @@ public class Teacher extends BaseEntity {
     // ── Relationships ──────────────────────────────────────────────────────────
 
     @JsonIgnore
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
 
@@ -67,4 +67,26 @@ public class Teacher extends BaseEntity {
     @OneToMany(mappedBy = "markedBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default
     private List<com.school.management.attendance.entity.Attendance> markedAttendances = new ArrayList<>();
+
+    // ── Transient API Exclusions ───────────────────────────────────────────────
+
+    @Transient
+    @com.fasterxml.jackson.annotation.JsonProperty("firstName")
+    public String getFirstName() { return user != null ? user.getFirstName() : null; }
+
+    @Transient
+    @com.fasterxml.jackson.annotation.JsonProperty("lastName")
+    public String getLastName() { return user != null ? user.getLastName() : null; }
+
+    @Transient
+    @com.fasterxml.jackson.annotation.JsonProperty("email")
+    public String getEmail() { return user != null ? user.getEmail() : null; }
+
+    @Transient
+    @com.fasterxml.jackson.annotation.JsonProperty("gender")
+    public com.school.management.common.enums.Gender getGender() { return user != null ? user.getGender() : null; }
+
+    @Transient
+    @com.fasterxml.jackson.annotation.JsonProperty("role")
+    public com.school.management.common.enums.Role getRole() { return user != null ? user.getRole() : null; }
 }

@@ -68,14 +68,27 @@ public class Student extends BaseEntity {
     // ── Relationships ──────────────────────────────────────────────────────────
 
     @JsonIgnore
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
 
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "class_grade_id")
     private ClassGrade classGrade;
+
+    // expose classGrade details in JSON for frontend display
+    @Transient
+    @com.fasterxml.jackson.annotation.JsonProperty("classGrade")
+    public java.util.Map<String, Object> getClassGradeInfo() {
+        if (classGrade == null) return null;
+        java.util.Map<String, Object> m = new java.util.LinkedHashMap<>();
+        m.put("id", classGrade.getId());
+        m.put("gradeName", classGrade.getGradeName());
+        m.put("section", classGrade.getSection());
+        m.put("displayName", classGrade.getDisplayName());
+        return m;
+    }
 
     @JsonIgnore
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -98,4 +111,26 @@ public class Student extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "route_stop_id")
     private com.school.management.transport.entity.RouteStop routeStop; // Student's bus pickup/drop stop
+
+    // ── Transient API Exclusions ───────────────────────────────────────────────
+
+    @Transient
+    @com.fasterxml.jackson.annotation.JsonProperty("firstName")
+    public String getFirstName() { return user != null ? user.getFirstName() : null; }
+
+    @Transient
+    @com.fasterxml.jackson.annotation.JsonProperty("lastName")
+    public String getLastName() { return user != null ? user.getLastName() : null; }
+
+    @Transient
+    @com.fasterxml.jackson.annotation.JsonProperty("email")
+    public String getEmail() { return user != null ? user.getEmail() : null; }
+
+    @Transient
+    @com.fasterxml.jackson.annotation.JsonProperty("gender")
+    public com.school.management.common.enums.Gender getGender() { return user != null ? user.getGender() : null; }
+
+    @Transient
+    @com.fasterxml.jackson.annotation.JsonProperty("role")
+    public com.school.management.common.enums.Role getRole() { return user != null ? user.getRole() : null; }
 }

@@ -9,6 +9,10 @@ import com.school.management.leave.repository.LeaveRequestRepository;
 import com.school.management.student.repository.StudentRepository;
 import com.school.management.teacher.repository.TeacherRepository;
 import com.school.management.user.repository.UserRepository;
+import com.school.management.academic.repository.ClassGradeRepository;
+import com.school.management.academic.repository.DepartmentRepository;
+import com.school.management.staff.repository.StaffRepository;
+import com.school.management.transport.repository.VehicleRepository;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -31,13 +35,11 @@ public class DashboardService {
     private final AdmissionRequestRepository admissionRepo;
     private final FeePaymentRepository feePaymentRepo;
     private final LeaveRequestRepository leaveRepo;
+    private final ClassGradeRepository classGradeRepo;
+    private final DepartmentRepository departmentRepo;
+    private final StaffRepository staffRepo;
+    private final VehicleRepository vehicleRepo;
 
-    /**
-     * Cached for 5 minutes (300s). Cache is evicted by any admission approval,
-     * student creation, or fee payment — configured in the controllers
-     * via @CacheEvict.
-     */
-    @Cacheable(value = "dashboard_stats", key = "'global'")
     public DashboardStats getAdminDashboardStats() {
         long totalStudents = studentRepo.count();
         long totalTeachers = teacherRepo.count();
@@ -64,6 +66,11 @@ public class DashboardService {
 
         long pendingLeaveRequests = leaveRepo.countByStatus(com.school.management.common.enums.LeaveStatus.PENDING);
 
+        long totalClasses = classGradeRepo.count();
+        long totalDepartments = departmentRepo.count();
+        long totalStaff = staffRepo.count();
+        long activeVehicles = vehicleRepo.count();
+
         return DashboardStats.builder()
                 .totalStudents(totalStudents)
                 .totalTeachers(totalTeachers)
@@ -74,6 +81,10 @@ public class DashboardService {
                 .monthlyFeeCollection(monthlyCollection)
                 .yearlyFeeCollection(yearlyCollection)
                 .pendingLeaveRequests(pendingLeaveRequests)
+                .totalClasses(totalClasses)
+                .totalDepartments(totalDepartments)
+                .totalStaff(totalStaff)
+                .activeVehicles(activeVehicles)
                 .generatedAt(LocalDateTime.now())
                 .build();
     }
@@ -90,6 +101,10 @@ public class DashboardService {
         private BigDecimal monthlyFeeCollection;
         private BigDecimal yearlyFeeCollection;
         private long pendingLeaveRequests;
+        private long totalClasses;
+        private long totalDepartments;
+        private long totalStaff;
+        private long activeVehicles;
         private LocalDateTime generatedAt;
     }
 }
