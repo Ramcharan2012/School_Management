@@ -64,4 +64,29 @@ public class LeaveRequest extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reviewed_by", nullable = true)
     private User reviewedBy;
+
+    // ── Getters for JSON ──────────────────────────────────────────────────────
+
+    @com.fasterxml.jackson.annotation.JsonProperty("applicantId")
+    public Long getApplicantId() {
+        return applicant != null ? applicant.getId() : null;
+    }
+
+    @com.fasterxml.jackson.annotation.JsonProperty("applicantName")
+    public String getApplicantName() {
+        if (applicant != null) {
+            return applicant.getFirstName() + " " + applicant.getLastName();
+        }
+        return null;
+    }
+
+    @com.fasterxml.jackson.annotation.JsonProperty("applicantRole")
+    public String getApplicantRole() {
+        return applicant != null ? applicant.getRole().name() : null;
+    }
+
+    @com.fasterxml.jackson.annotation.JsonProperty("reviewerId")
+    public Long getReviewerId() {
+        return reviewedBy != null ? reviewedBy.getId() : null;
+    }
 }

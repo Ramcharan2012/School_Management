@@ -96,6 +96,19 @@ export default function LoginPage() {
           </button>
         </form>
 
+        {/* Demo Quick Logins */}
+        <div style={{ marginTop: '24px', paddingTop: '20px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+          <p style={{ fontSize: '11px', textTransform: 'uppercase', color: '#94a3b8', letterSpacing: '1px', marginBottom: '12px', textAlign: 'center', fontWeight: '600' }}>
+            Demo Accounts
+          </p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)', gap: '8px' }}>
+            <button type="button" onClick={() => { setIdentifier('admin@school.com'); setPassword('Admin@123'); }} style={styles.demoBtn}>Admin</button>
+            <button type="button" onClick={() => { setIdentifier('ramcharan.pandavula'); setPassword('Ramcharan@Teacher123'); }} style={styles.demoBtn}>Teacher</button>
+            <button type="button" onClick={() => { setIdentifier('arjun.reddy'); setPassword('Arjun@15052012'); }} style={styles.demoBtn}>Student</button>
+            <button type="button" onClick={() => { setIdentifier('panda.badhrachalam'); setPassword('Panda@Staff123'); }} style={styles.demoBtn}>Staff</button>
+          </div>
+        </div>
+
         {/* Footer note */}
         <div style={{...styles.footer, flexDirection: 'column', gap: '16px'}}>
           <button 
@@ -194,4 +207,9 @@ const styles = {
     marginTop: '28px',
   },
   footerText: { fontSize: '12px', color: '#64748b' },
+  demoBtn: {
+    padding: '8px', borderRadius: '6px', background: 'rgba(99,102,241,0.1)',
+    border: '1px solid rgba(99,102,241,0.2)', color: '#818cf8', fontSize: '12px',
+    fontWeight: '600', cursor: 'pointer', transition: 'all 0.2s'
+  }
 };
