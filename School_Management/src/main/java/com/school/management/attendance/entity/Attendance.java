@@ -56,16 +56,19 @@ public class Attendance extends BaseEntity {
 
     // ── Getters for JSON ──────────────────────────────────────────────────────
 
+    @jakarta.persistence.Transient
     @com.fasterxml.jackson.annotation.JsonProperty("studentId")
     public Long getStudentId() {
         return student != null ? student.getId() : null;
     }
 
+    @jakarta.persistence.Transient
     @com.fasterxml.jackson.annotation.JsonProperty("subjectId")
     public Long getSubjectId() {
         return subject != null ? subject.getId() : null;
     }
 
+    @jakarta.persistence.Transient
     @com.fasterxml.jackson.annotation.JsonProperty("teacherId")
     public Long getTeacherId() {
         return markedBy != null ? markedBy.getId() : null;

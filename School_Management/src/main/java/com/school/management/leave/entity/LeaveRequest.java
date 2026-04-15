@@ -67,11 +67,13 @@ public class LeaveRequest extends BaseEntity {
 
     // ── Getters for JSON ──────────────────────────────────────────────────────
 
+    @jakarta.persistence.Transient
     @com.fasterxml.jackson.annotation.JsonProperty("applicantId")
     public Long getApplicantId() {
         return applicant != null ? applicant.getId() : null;
     }
 
+    @jakarta.persistence.Transient
     @com.fasterxml.jackson.annotation.JsonProperty("applicantName")
     public String getApplicantName() {
         if (applicant != null) {
@@ -80,11 +82,13 @@ public class LeaveRequest extends BaseEntity {
         return null;
     }
 
+    @jakarta.persistence.Transient
     @com.fasterxml.jackson.annotation.JsonProperty("applicantRole")
     public String getApplicantRole() {
         return applicant != null ? applicant.getRole().name() : null;
     }
 
+    @jakarta.persistence.Transient
     @com.fasterxml.jackson.annotation.JsonProperty("reviewerId")
     public Long getReviewerId() {
         return reviewedBy != null ? reviewedBy.getId() : null;
