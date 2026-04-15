@@ -88,6 +88,9 @@ public class SecurityConfig {
                         .requestMatchers("/public/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/actuator/health", "/actuator/info").permitAll()
+                        // Public read access for admission form dropdowns
+                        .requestMatchers(HttpMethod.GET, "/admin/academic/years/active").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/admin/academic/classes").permitAll()
 
                         // ── Admin Only ────────────────────────────────────────────────
                         .requestMatchers("/admin/**").hasRole("ADMIN")
