@@ -24,7 +24,7 @@ services:
       - redis_data:/data
 
   zookeeper:
-    image: confluentinc/cp-zookeeper:7.6.0
+    image: confluentinc/cp-zookeeper:7.3.2
     container_name: school_zookeeper
     restart: unless-stopped
     environment:
@@ -38,7 +38,7 @@ services:
       - zookeeper_log:/var/lib/zookeeper/log
 
   kafka:
-    image: confluentinc/cp-kafka:7.6.0
+    image: confluentinc/cp-kafka:7.3.2
     container_name: school_kafka
     restart: unless-stopped
     depends_on:
