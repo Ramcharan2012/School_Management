@@ -14,6 +14,10 @@ import AdmissionsPage from './pages/AdmissionsPage';
 import AcademicSetupPage from './pages/AcademicSetupPage';
 import PublicAdmissionPage from './pages/PublicAdmissionPage';
 import DataSeedPage from './pages/DataSeedPage';
+import ProfilePage from './pages/ProfilePage';
+import MarksPage from './pages/MarksPage';
+import TimetablePage from './pages/TimetablePage';
+import AnalyticsPage from './pages/AnalyticsPage';
 import Sidebar from './components/Sidebar';
 
 // Protected layout — wraps all authenticated pages
@@ -75,6 +79,12 @@ export default function App() {
 
           {/* Teacher + Admin */}
           <Route path="/attendance" element={<Protected roles={['TEACHER','ADMIN']}><AttendancePage /></Protected>} />
+          <Route path="/marks"     element={<Protected roles={['TEACHER','ADMIN']}><MarksPage /></Protected>} />
+          <Route path="/timetable" element={<Protected roles={['TEACHER','ADMIN','STUDENT','STAFF']}><TimetablePage /></Protected>} />
+
+          {/* All authenticated */}
+          <Route path="/profile"   element={<Protected><ProfilePage /></Protected>} />
+          <Route path="/analytics" element={<Protected roles={['ADMIN']}><AnalyticsPage /></Protected>} />
 
           {/* Redirect root */}
           <Route path="/" element={<Navigate to="/dashboard" replace />} />

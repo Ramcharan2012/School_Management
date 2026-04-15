@@ -3,24 +3,30 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
   LayoutDashboard, Bus, GraduationCap, LogOut, ChevronRight,
-  Users, Bell, CreditCard, Calendar, CheckSquare, BookOpen, FileText, Settings
+  Users, Bell, CreditCard, Calendar, CheckSquare, BookOpen, FileText, Settings,
+  BarChart2, ClipboardList, User
 } from 'lucide-react';
 
 const navConfig = {
   ADMIN: [
     { label: 'Dashboard',    icon: LayoutDashboard, path: '/dashboard' },
-    { label: 'Academic Setup',icon: Settings,       path: '/academic-setup' },
-    { label: 'Students',     icon: Users,           path: '/students' },
-    { label: 'Admissions',   icon: FileText,        path: '/admissions' },
-    { label: 'Teachers',     icon: GraduationCap,   path: '/teachers' },
-    { label: 'Notices',      icon: Bell,            path: '/notices' },
-    { label: 'Attendance',   icon: CheckSquare,     path: '/attendance' },
-    { label: 'Fee',          icon: CreditCard,      path: '/fee' },
-    { label: 'Leave',        icon: Calendar,        path: '/leave' },
-    { label: 'Bus Tracking', icon: Bus,             path: '/bus-tracking' },
+    { label: 'Analytics',    icon: BarChart2,        path: '/analytics' },
+    { label: 'Academic Setup',icon: Settings,        path: '/academic-setup' },
+    { label: 'Students',     icon: Users,            path: '/students' },
+    { label: 'Admissions',   icon: FileText,         path: '/admissions' },
+    { label: 'Teachers',     icon: GraduationCap,    path: '/teachers' },
+    { label: 'Marks',        icon: ClipboardList,    path: '/marks' },
+    { label: 'Timetable',    icon: Calendar,         path: '/timetable' },
+    { label: 'Notices',      icon: Bell,             path: '/notices' },
+    { label: 'Attendance',   icon: CheckSquare,      path: '/attendance' },
+    { label: 'Fee',          icon: CreditCard,       path: '/fee' },
+    { label: 'Leave',        icon: Calendar,         path: '/leave' },
+    { label: 'Bus Tracking', icon: Bus,              path: '/bus-tracking' },
   ],
   TEACHER: [
     { label: 'Dashboard',    icon: LayoutDashboard, path: '/dashboard' },
+    { label: 'Marks',        icon: ClipboardList,   path: '/marks' },
+    { label: 'Timetable',    icon: Calendar,        path: '/timetable' },
     { label: 'Attendance',   icon: CheckSquare,     path: '/attendance' },
     { label: 'Notices',      icon: Bell,            path: '/notices' },
     { label: 'Leave',        icon: Calendar,        path: '/leave' },
@@ -28,12 +34,14 @@ const navConfig = {
   ],
   STUDENT: [
     { label: 'Dashboard',    icon: LayoutDashboard, path: '/dashboard' },
+    { label: 'Timetable',    icon: Calendar,        path: '/timetable' },
     { label: 'Notices',      icon: Bell,            path: '/notices' },
     { label: 'Leave',        icon: Calendar,        path: '/leave' },
     { label: 'Bus Tracking', icon: Bus,             path: '/bus-tracking' },
   ],
   STAFF: [
     { label: 'Dashboard',    icon: LayoutDashboard, path: '/dashboard' },
+    { label: 'Timetable',    icon: Calendar,        path: '/timetable' },
     { label: 'Notices',      icon: Bell,            path: '/notices' },
     { label: 'Leave',        icon: Calendar,        path: '/leave' },
     { label: 'Bus Tracking', icon: Bus,             path: '/bus-tracking' },
@@ -100,7 +108,7 @@ export default function Sidebar() {
         <div style={{ ...styles.avatar, background: `linear-gradient(135deg, ${roleColor[role]}, #1e293b)` }}>
           {user?.fullName?.charAt(0).toUpperCase() || 'U'}
         </div>
-        <div style={styles.userInfo}>
+        <div style={styles.userInfo} onClick={() => navigate('/profile')} title="View Profile">
           <div style={styles.userName}>{user?.fullName || 'User'}</div>
           <div style={styles.userRole}>{role}</div>
         </div>
