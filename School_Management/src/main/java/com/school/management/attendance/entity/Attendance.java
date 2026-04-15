@@ -53,4 +53,21 @@ public class Attendance extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "marked_by", nullable = false)
     private Teacher markedBy;
+
+    // ── Getters for JSON ──────────────────────────────────────────────────────
+
+    @com.fasterxml.jackson.annotation.JsonProperty("studentId")
+    public Long getStudentId() {
+        return student != null ? student.getId() : null;
+    }
+
+    @com.fasterxml.jackson.annotation.JsonProperty("subjectId")
+    public Long getSubjectId() {
+        return subject != null ? subject.getId() : null;
+    }
+
+    @com.fasterxml.jackson.annotation.JsonProperty("teacherId")
+    public Long getTeacherId() {
+        return markedBy != null ? markedBy.getId() : null;
+    }
 }
