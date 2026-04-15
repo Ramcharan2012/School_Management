@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import {
   LayoutDashboard, Bus, GraduationCap, LogOut, ChevronRight,
   Users, Bell, CreditCard, Calendar, CheckSquare, BookOpen, FileText, Settings,
-  BarChart2, ClipboardList, User
+  BarChart2, ClipboardList, User, Map
 } from 'lucide-react';
 
 const navConfig = {
@@ -22,6 +22,8 @@ const navConfig = {
     { label: 'Fee',          icon: CreditCard,       path: '/fee' },
     { label: 'Leave',        icon: Calendar,         path: '/leave' },
     { label: 'Bus Tracking', icon: Bus,              path: '/bus-tracking' },
+    { label: 'Transport Setup', icon: Settings,      path: '/admin/transport' },
+    { label: 'Bus Simulator', icon: Map,             path: '/admin/simulator' },
   ],
   TEACHER: [
     { label: 'Dashboard',    icon: LayoutDashboard, path: '/dashboard' },

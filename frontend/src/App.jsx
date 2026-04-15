@@ -18,6 +18,8 @@ import ProfilePage from './pages/ProfilePage';
 import MarksPage from './pages/MarksPage';
 import TimetablePage from './pages/TimetablePage';
 import AnalyticsPage from './pages/AnalyticsPage';
+import TransportAdminPage from './pages/TransportAdminPage';
+import BusSimulatorPage from './pages/BusSimulatorPage';
 import Sidebar from './components/Sidebar';
 
 // Protected layout — wraps all authenticated pages
@@ -76,6 +78,8 @@ export default function App() {
           <Route path="/admissions" element={<Protected roles={['ADMIN']}><AdmissionsPage /></Protected>} />
           <Route path="/teachers"   element={<Protected roles={['ADMIN']}><TeachersPage /></Protected>} />
           <Route path="/fee"        element={<Protected roles={['ADMIN']}><FeePage /></Protected>} />
+          <Route path="/admin/transport" element={<Protected roles={['ADMIN']}><TransportAdminPage /></Protected>} />
+          <Route path="/admin/simulator" element={<Protected roles={['ADMIN']}><BusSimulatorPage /></Protected>} />
 
           {/* Teacher + Admin */}
           <Route path="/attendance" element={<Protected roles={['TEACHER','ADMIN']}><AttendancePage /></Protected>} />
