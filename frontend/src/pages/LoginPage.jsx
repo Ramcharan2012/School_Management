@@ -86,6 +86,17 @@ export default function LoginPage() {
           {/* Error */}
           {error && <div style={styles.error}>{error}</div>}
 
+          {/* Forgot password */}
+          <div style={{ textAlign: 'right', marginTop: '-8px' }}>
+            <button
+              type="button"
+              onClick={() => navigate('/forgot-password')}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#6366f1', fontSize: '12px', fontWeight: '600', padding: 0 }}
+            >
+              Forgot password?
+            </button>
+          </div>
+
           {/* Submit */}
           <button type="submit" style={styles.btn} disabled={loading}>
             {loading ? (

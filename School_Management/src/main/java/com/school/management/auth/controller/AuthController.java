@@ -68,8 +68,10 @@ public class AuthController {
 
     @GetMapping("/me")
     @Operation(summary = "Get current authenticated user info", security = @SecurityRequirement(name = "bearerAuth"))
-    public ResponseEntity<ApiResponse<UserDetails>> getCurrentUser(@AuthenticationPrincipal UserDetails userDetails) {
-        return ResponseEntity.ok(ApiResponse.success(userDetails));
+    public ResponseEntity<ApiResponse<com.school.management.user.entity.User>> getCurrentUser(
+            @AuthenticationPrincipal UserDetails userDetails) {
+        com.school.management.user.entity.User user = authService.getUserByEmail(userDetails.getUsername());
+        return ResponseEntity.ok(ApiResponse.success(user));
     }
 
     // ── Password Reset (Public — no token needed) ─────────────────────────────

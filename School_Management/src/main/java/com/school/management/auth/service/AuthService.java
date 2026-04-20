@@ -238,4 +238,15 @@ public class AuthService {
 
         log.info("Password reset successfully for: {}", email);
     }
+
+    // ── Profile ───────────────────────────────────────────────────────────────
+
+    /**
+     * Returns the full User entity for the /auth/me endpoint.
+     */
+    @Transactional(readOnly = true)
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "email", email));
+    }
 }

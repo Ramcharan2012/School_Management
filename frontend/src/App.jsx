@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import LoginPage from './pages/LoginPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import DashboardPage from './pages/DashboardPage';
 import BusTrackingPage from './pages/BusTrackingPage';
 import StudentsPage from './pages/StudentsPage';
@@ -64,6 +65,7 @@ export default function App() {
           {/* Public */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/apply" element={<PublicAdmissionPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
           {/* All authenticated */}
           <Route path="/dashboard"    element={<Protected><DashboardPage /></Protected>} />

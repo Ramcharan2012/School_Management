@@ -107,12 +107,16 @@ export default function Sidebar() {
 
       {/* User Block */}
       <div style={styles.userBlock}>
-        <div style={{ ...styles.avatar, background: `linear-gradient(135deg, ${roleColor[role]}, #1e293b)` }}>
+        <div
+          style={{ ...styles.avatar, background: `linear-gradient(135deg, ${roleColor[role]}, #1e293b)`, cursor: 'pointer' }}
+          onClick={() => navigate('/profile')}
+          title="View Profile"
+        >
           {user?.fullName?.charAt(0).toUpperCase() || 'U'}
         </div>
-        <div style={styles.userInfo} onClick={() => navigate('/profile')} title="View Profile">
+        <div style={{ ...styles.userInfo, cursor: 'pointer' }} onClick={() => navigate('/profile')} title="View Profile">
           <div style={styles.userName}>{user?.fullName || 'User'}</div>
-          <div style={styles.userRole}>{role}</div>
+          <div style={{ ...styles.userRole, color: '#6366f1', fontSize: '10px' }}>👤 View Profile</div>
         </div>
         <button style={styles.logoutBtn} onClick={handleLogout} title="Logout">
           <LogOut size={15} color="#64748b" />
