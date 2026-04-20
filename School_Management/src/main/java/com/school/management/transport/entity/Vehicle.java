@@ -1,5 +1,6 @@
 package com.school.management.transport.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.school.management.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -40,7 +41,16 @@ public class Vehicle extends BaseEntity {
     private Boolean isActive = true;
 
     // ── Relationship ──────────────────────────────────────────────────────
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "route_id")
     private Route route;
+
+    // ── JSON helpers ───────────────────────────────────────────────────
+    @jakarta.persistence.Transient
+    @com.fasterxml.jackson.annotation.JsonProperty("route")
+    public java.util.Map<String, Object> fetchRoute() {
+        if (route == null) return null;
+        return java.util.Map.of("id", route.getId(), "routeName", route.getRouteName());
+    }
 }

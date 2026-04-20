@@ -254,7 +254,42 @@ export const transportAPI = {
   createVehicle: (data) => api.post('/admin/transport/vehicles', data),
   getRoutes: () => api.get('/admin/transport/routes'),
   createRoute: (data) => api.post('/admin/transport/routes', data),
+  getStops: (routeId) => api.get(`/admin/transport/routes/${routeId}/stops`),
   addStop: (routeId, data) => api.post(`/admin/transport/routes/${routeId}/stops`, data),
   getBusLocation: (vehicleId) => api.get(`/transport/bus/${vehicleId}/location`),
   sendLocation: (data) => api.post('/transport/location', data),
+};
+
+// ══════════════════════════════════════════════════════════════════════════════
+// MARKS —— /admin/exams, /teacher/marks, /student/marks
+// ══════════════════════════════════════════════════════════════════════════════
+export const marksAPI = {
+  // GET /admin/exams/class/{classGradeId}
+  getExamsByClass: (classGradeId, page = 0, size = 20) =>
+    api.get(`/admin/exams/class/${classGradeId}`, { params: { page, size } }),
+  // POST /admin/exams
+  createExam: (data) => api.post('/admin/exams', data),
+  // PATCH /admin/exams/{examId}/publish
+  publishExam: (examId) => api.patch(`/admin/exams/${examId}/publish`),
+  // GET /teacher/marks/exam/{examId}/results
+  getExamResults: (examId) => api.get(`/teacher/marks/exam/${examId}/results`),
+  // POST /teacher/marks
+  enterMark: (data) => api.post('/teacher/marks', data),
+  // GET /student/marks/{studentId}  — student views own marks
+  getStudentMarks: (studentId, page = 0) =>
+    api.get(`/student/marks/${studentId}`, { params: { page } }),
+};
+
+// ══════════════════════════════════════════════════════════════════════════════
+// TIMETABLE —— /timetable or /admin/timetable
+// ══════════════════════════════════════════════════════════════════════════════
+export const timetableAPI = {
+  // GET /timetable/class/{classGradeId}
+  getByClass: (classGradeId) => api.get(`/timetable/class/${classGradeId}`),
+  // GET /timetable/teacher/{teacherId}
+  getByTeacher: (teacherId) => api.get(`/timetable/teacher/${teacherId}`),
+  // POST /admin/timetable
+  create: (data) => api.post('/admin/timetable', data),
+  // DELETE /admin/timetable/{id}
+  delete: (id) => api.delete(`/admin/timetable/${id}`),
 };

@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, Plus, Trash2, Clock, X } from 'lucide-react';
 import api from '../services/api';
+import { useAuth } from '../context/AuthContext';
 
 const DAYS = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
 const DAY_SHORT = { MONDAY: 'Mon', TUESDAY: 'Tue', WEDNESDAY: 'Wed', THURSDAY: 'Thu', FRIDAY: 'Fri', SATURDAY: 'Sat' };
 const SUBJECT_COLORS = ['#6366f1', '#06b6d4', '#22c55e', '#f59e0b', '#ec4899', '#8b5cf6', '#14b8a6', '#f97316'];
 
 export default function TimetablePage() {
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'ADMIN';
+  const isTeacher = user?.role === 'TEACHER';
   const [classes, setClasses] = useState([]);
   const [subjects, setSubjects] = useState([]);
   const [teachers, setTeachers] = useState([]);
@@ -17,9 +21,17 @@ export default function TimetablePage() {
   const [form, setForm] = useState({ subjectId: '', teacherId: '', dayOfWeek: 'MONDAY', startTime: '08:00', endTime: '09:00', roomNumber: '' });
 
   useEffect(() => {
-    loadClasses();
-    loadSubjects();
-    loadTeachers();
+    if (isAdmin) {
+      loadClasses();
+      loadSubjects();
+      loadTeachers();
+    } else if (isTeacher) {
+      // Teachers: load their own schedule using their teacher profile
+      loadTeacherSchedule();
+    } else {
+      // Students/Staff: auto-load their class
+      loadStudentClass();
+    }
   }, []);
 
   const loadClasses = async () => {
@@ -29,6 +41,33 @@ export default function TimetablePage() {
       if (!yId) return;
       const r = await api.get('/admin/academic/classes', { params: { academicYearId: yId, page: 0, size: 50 } });
       setClasses(r.data.data?.content || []);
+    } catch {}
+  };
+
+  const loadStudentClass = async () => {
+    try {
+      // Get student profile to find classGradeId
+      const r = await api.get('/student/profile');
+      const classGradeId = r.data.data?.classGradeId || r.data.data?.classGrade?.id;
+      if (classGradeId) {
+        const className = r.data.data?.classGrade?.gradeName || 'My Class';
+        const section = r.data.data?.classGrade?.section || '';
+        const cls = { id: classGradeId, gradeName: className, section };
+        setSelectedClass(cls);
+        loadTimetable(classGradeId);
+      }
+    } catch {}
+  };
+
+  const loadTeacherSchedule = async () => {
+    try {
+      const r = await api.get('/teacher/profile');
+      const teacherId = r.data.data?.id;
+      if (teacherId) {
+        const res = await api.get(`/timetable/teacher/${teacherId}`);
+        setTimetable(res.data.data || []);
+        setSelectedClass({ id: null, gradeName: 'My Schedule', section: '' });
+      }
     } catch {}
   };
 
@@ -107,7 +146,7 @@ export default function TimetablePage() {
             <p style={s.subtitle}>Manage weekly class schedules</p>
           </div>
         </div>
-        {selectedClass && (
+        {selectedClass && isAdmin && (
           <button style={s.primaryBtn} onClick={() => setShowAdd(true)}>
             <Plus size={15} /> Add Slot
           </button>
@@ -115,8 +154,9 @@ export default function TimetablePage() {
       </div>
 
       <div style={s.layout}>
-        {/* Class Selector */}
+        {/* Class Selector — only shown to admins */}
         <div style={s.leftPanel}>
+          {isAdmin && (
           <div style={s.panelCard}>
             <div style={s.panelTitle}>Select Class</div>
             {classes.map(cls => (
@@ -125,6 +165,7 @@ export default function TimetablePage() {
               </button>
             ))}
           </div>
+          )}
 
           {/* Legend */}
           {subjects.length > 0 && selectedClass && (
@@ -168,9 +209,11 @@ export default function TimetablePage() {
                         <div key={slot.id} style={{ ...s.slot, background: `${color}18`, borderColor: `${color}44`, borderLeft: `3px solid ${color}` }}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                             <div style={{ ...s.slotSubject, color }}>{slot.subject?.name || '—'}</div>
+                            {isAdmin && (
                             <button onClick={() => deleteSlot(slot.id)} style={s.deleteBtn}>
                               <Trash2 size={11} />
                             </button>
+                            )}
                           </div>
                           <div style={s.slotTime}>
                             <Clock size={10} />

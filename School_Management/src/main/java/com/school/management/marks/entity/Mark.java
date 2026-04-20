@@ -56,4 +56,25 @@ public class Mark extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "entered_by", nullable = false)
     private Teacher enteredBy;
+
+    // ── JSON helpers ──────────────────────────────────────────────────────────
+    @Transient
+    @com.fasterxml.jackson.annotation.JsonProperty("student")
+    public java.util.Map<String, Object> fetchStudent() {
+        if (student == null) return null;
+        String fn = student.getUser() != null ? student.getUser().getFirstName() : "";
+        String ln = student.getUser() != null ? student.getUser().getLastName() : "";
+        return java.util.Map.of("id", student.getId(), "rollNumber", student.getRollNumber() != null ? student.getRollNumber() : "",
+                "user", java.util.Map.of("firstName", fn, "lastName", ln));
+    }
+
+    @Transient
+    @com.fasterxml.jackson.annotation.JsonProperty("exam")
+    public java.util.Map<String, Object> fetchExam() {
+        if (exam == null) return null;
+        return java.util.Map.of("id", exam.getId(), "title", exam.getTitle(),
+                "totalMarks", exam.getTotalMarks(), "passingMarks", exam.getPassingMarks(),
+                "examType", exam.getExamType() != null ? exam.getExamType().name() : "",
+                "isPublished", exam.getIsPublished());
+    }
 }

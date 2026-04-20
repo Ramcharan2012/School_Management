@@ -1,5 +1,6 @@
 package com.school.management.timetable.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.school.management.academic.entity.ClassGrade;
 import com.school.management.academic.entity.Subject;
 import com.school.management.common.entity.BaseEntity;
@@ -43,15 +44,44 @@ public class Timetable extends BaseEntity {
 
     // ── Relationships ──────────────────────────────────────────────────────────
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "class_grade_id", nullable = false)
     private ClassGrade classGrade;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subject_id", nullable = false)
     private Subject subject;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "teacher_id", nullable = false)
     private Teacher teacher;
+
+    // ── JSON helpers ──────────────────────────────────────────────────────────
+
+    @Transient
+    @com.fasterxml.jackson.annotation.JsonProperty("classGradeId")
+    public Long fetchClassGradeId() { return classGrade != null ? classGrade.getId() : null; }
+
+    @Transient
+    @com.fasterxml.jackson.annotation.JsonProperty("subject")
+    public java.util.Map<String, Object> fetchSubject() {
+        if (subject == null) return null;
+        return java.util.Map.of("id", subject.getId(), "name", subject.getName(), "code", subject.getCode() != null ? subject.getCode() : "");
+    }
+
+    @Transient
+    @com.fasterxml.jackson.annotation.JsonProperty("teacher")
+    public java.util.Map<String, Object> fetchTeacher() {
+        if (teacher == null) return null;
+        return java.util.Map.of(
+            "id", teacher.getId(),
+            "user", java.util.Map.of(
+                "firstName", teacher.getUser() != null ? teacher.getUser().getFirstName() : "",
+                "lastName", teacher.getUser() != null ? teacher.getUser().getLastName() : ""
+            )
+        );
+    }
 }
